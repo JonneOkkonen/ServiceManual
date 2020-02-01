@@ -34,10 +34,10 @@ namespace ServiceManual.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Device> Get()
+        public IEnumerable<MaintenanceTask> Get()
         {
             Database db = new Database();
-            return db.GetDevices();
+            return db.GetMaintenanceTasks();
         }
     }
 }

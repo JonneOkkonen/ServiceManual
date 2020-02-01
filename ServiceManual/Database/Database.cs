@@ -8,29 +8,29 @@ namespace ServiceManual
 {
     public class Database
     {
-
-        public Database()
-        {
-        }
-
         /// <summary>
-        /// Get list of devices from database
+        /// Get single or list of devices from database
         /// </summary>
         /// <param name="query"></param>
         /// <returns>
-        /// Returns List of Devices
+        /// Returns single or list of Devices
         /// </returns>
-        public List<Device> GetDevices()
+        public List<Device> GetDevices(int? id = null)
         {
             try
             {
                 // List for data
                 List<Device> data = new List<Device>();
+
                 // Create Connection and open it
                 using MySqlConnection conn = new MySqlConnection(GetConnectionString());
                 conn.Open();
+
                 // Run the SQL Query
-                using MySqlCommand cmd = new MySqlCommand("SELECT * FROM Device", conn);
+                string query = "SELECT * FROM Device";
+                if (id != null) query += $" WHERE DeviceID = {id}";
+                using MySqlCommand cmd = new MySqlCommand(query, conn);
+
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -41,6 +41,52 @@ namespace ServiceManual
                         reader.GetInt32(2),
                         reader.GetString(3)));
                 }
+
+                // Return results
+                return data;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get single or list of maintenance tasks from database
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns>
+        /// Returns single or list of MaintenanceTasks
+        /// </returns>
+        public List<MaintenanceTask> GetMaintenanceTasks(int? id = null)
+        {
+            try
+            {
+                // List for data
+                List<MaintenanceTask> data = new List<MaintenanceTask>();
+
+                // Create Connection and open it
+                using MySqlConnection conn = new MySqlConnection(GetConnectionString());
+                conn.Open();
+
+                // Run the SQL Query
+                string query = "SELECT * FROM MaintenanceTask";
+                if (id != null) query += $" WHERE TaskID = {id}";
+                using MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                // Read the result of the query
+                using MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    data.Add(new MaintenanceTask(
+                        reader.GetInt32(0),
+                        reader.GetInt32(1),
+                        reader.GetDateTime(2),
+                        reader.GetInt32(3),
+                        reader.GetInt32(4),
+                        reader.GetString(5)));
+                }
+
                 // Return results
                 return data;
             }
