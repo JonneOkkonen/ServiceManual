@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace ServiceManual
 {
@@ -26,6 +27,9 @@ namespace ServiceManual
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Configure Swagger
+            services.AddSwaggerGen(x => { x.SwaggerDoc("v1", new OpenApiInfo { Title="Service Manual API", Version="v1" }); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +50,12 @@ namespace ServiceManual
             {
                 endpoints.MapControllers();
             });
+
+            // Configure Swagger
+            SwaggerOptions swagger = new SwaggerOptions();
+            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swagger);
+            app.UseSwagger(option => { option.RouteTemplate = swagger.JsonRoute; });
+            app.UseSwaggerUI(option => { option.SwaggerEndpoint(swagger.UiEndpoint, swagger.Description); });
         }
     }
 }

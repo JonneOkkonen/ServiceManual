@@ -7,5 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.19" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.json" />
   </ItemGroup>
 </Project>
