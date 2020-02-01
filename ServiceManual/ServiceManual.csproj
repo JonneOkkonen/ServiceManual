@@ -5,4 +5,7 @@
   </PropertyGroup>
 
 
+  <ItemGroup>
+    <PackageReference Include="sqlite" Version="3.13.0" />
+  </ItemGroup>
 </Project>
