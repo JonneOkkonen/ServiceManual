@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,15 +36,8 @@ namespace ServiceManual.Controllers
         [HttpGet]
         public IEnumerable<Device> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new Device
-            {
-                DeviceID = rng.Next(0,500),
-                Name = "Device " + rng.Next(3849,5000),
-                Year = rng.Next(1900, 2020),
-                Type = "Type " + rng.Next(15, 35)
-            })
-            .ToArray();
+            Database db = new Database();
+            return db.GetDevices();
         }
     }
 }
