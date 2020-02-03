@@ -57,5 +57,32 @@ namespace ServiceManual.Controllers.v1
                 return Ok(e.Message);
             }
         }
+
+        /// <summary>
+        /// Get all Maintenance Tasks for given deviceID
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(APIRoute.Tasks.GetAllForDevice)]
+        public IActionResult GetAllForDevice([FromRoute]int? deviceID)
+        {
+            try
+            {
+                // Check if id was integer
+                if (int.TryParse(deviceID.ToString(), out int ID) == false)
+                {
+                    return Ok(new ErrorMessage("ID has to be integer!"));
+                }
+
+                // Create DB object
+                Database db = new Database();
+
+                // Return all tasks for given deviceID
+                return Ok(db.GetMaintenanceTasks(null, ID));
+            }
+            catch (Exception e)
+            {
+                return Ok(e.Message);
+            }
+        }
     }
 }

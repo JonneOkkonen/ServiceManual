@@ -25,7 +25,7 @@ namespace ServiceManual
         /// <summary>
         /// Get single or list of devices from database
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="id"></param>
         /// <returns>
         /// Returns single or list of Devices
         /// </returns>
@@ -68,11 +68,12 @@ namespace ServiceManual
         /// <summary>
         /// Get single or list of maintenance tasks from database
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="id"></param>
+        /// <param name="deviceID"></param>
         /// <returns>
         /// Returns single or list of MaintenanceTasks
         /// </returns>
-        public List<MaintenanceTask> GetMaintenanceTasks(int? id = null)
+        public List<MaintenanceTask> GetMaintenanceTasks(int? id = null, int? deviceID = null)
         {
             try
             {
@@ -98,6 +99,7 @@ namespace ServiceManual
                                 "INNER JOIN Device " +
                                 "ON MaintenanceTask.DeviceID = Device.DeviceID";
                 if (id != null) query += $" WHERE MaintenanceTask.TaskID = {id}";
+                if (deviceID != null) query += $" WHERE Device.DeviceID = {deviceID}";
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
 
                 // Read the result of the query
