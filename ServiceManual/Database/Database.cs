@@ -8,6 +8,20 @@ namespace ServiceManual
 {
     public class Database
     {
+        // Priority levels from 1-3
+        // 1: Lievä, 2: Tärkeä, 3: Kriittinen
+        private static readonly string[] Priority = new[]
+        {
+            "Undefined", "Lievä", "Tärkeä", "Kriittinen"
+        };
+
+        // State levels from 0-1
+        // 0: Huollettu, 1: Avoin
+        private static readonly string[] State = new[]
+{
+            "Huollettu", "Avoin"
+        };
+
         /// <summary>
         /// Get single or list of devices from database
         /// </summary>
@@ -82,8 +96,8 @@ namespace ServiceManual
                         reader.GetInt32(0),
                         reader.GetInt32(1),
                         reader.GetDateTime(2),
-                        reader.GetInt32(3),
-                        reader.GetInt32(4),
+                        Priority[reader.GetInt32(3)],
+                        State[reader.GetInt32(4)],
                         reader.GetString(5)));
                 }
 
