@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using ServiceManual.Exceptions;
 
 namespace ServiceManual.Controllers.v1
 {
@@ -26,7 +27,7 @@ namespace ServiceManual.Controllers.v1
             }
             catch (Exception e)
             {
-                return Ok(e.Message);
+                return Ok(new ErrorMessage(e.Message));
             }
         }
 
@@ -42,7 +43,7 @@ namespace ServiceManual.Controllers.v1
                 // Check if id was integer
                 if (int.TryParse(taskID.ToString(), out int ID) == false)
                 {
-                    return Ok("ID has to be integer!");
+                    return Ok(new ErrorMessage("ID has to be integer!"));
                 }
 
                 // Create DB object
