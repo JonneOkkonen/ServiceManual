@@ -54,7 +54,7 @@ namespace ServiceManual.Controllers.v1
             }
             catch(Exception e)
             {
-                return Ok(e.Message);
+                return Ok(new ErrorMessage(e.Message));
             }
         }
 
@@ -81,7 +81,7 @@ namespace ServiceManual.Controllers.v1
             }
             catch (Exception e)
             {
-                return Ok(e.Message);
+                return Ok(new ErrorMessage(e.Message));
             }
         }
     }

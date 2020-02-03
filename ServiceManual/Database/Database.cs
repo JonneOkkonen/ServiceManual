@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using MySql.Data.MySqlClient;
+using ServiceManual.Exceptions;
 
 namespace ServiceManual
 {
@@ -47,14 +48,18 @@ namespace ServiceManual
 
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    data.Add(new Device(
-                        reader.GetInt32(0),
-                        reader.GetString(1),
-                        reader.GetInt32(2),
-                        reader.GetString(3)));
+                    while (reader.Read())
+                    {
+                        data.Add(new Device(
+                            reader.GetInt32(0),
+                            reader.GetString(1),
+                            reader.GetInt32(2),
+                            reader.GetString(3)));
+                    }
                 }
+                else throw new NoResultsFoundException();
 
                 // Return results
                 return data;
@@ -104,20 +109,25 @@ namespace ServiceManual
 
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    data.Add(new MaintenanceTask {
-                        TaskID = reader.GetInt32(0),
-                        DeviceID = reader.GetInt32(1),
-                        Name = reader.GetString(2),
-                        Year = reader.GetInt32(3),
-                        Type = reader.GetString(4),
-                        Created = reader.GetDateTime(5),
-                        Priority = Priority[reader.GetInt32(6)],
-                        State = State[reader.GetInt32(7)],
-                        Description = reader.GetString(8)
-                    });
+                    while (reader.Read())
+                    {
+                        data.Add(new MaintenanceTask
+                        {
+                            TaskID = reader.GetInt32(0),
+                            DeviceID = reader.GetInt32(1),
+                            Name = reader.GetString(2),
+                            Year = reader.GetInt32(3),
+                            Type = reader.GetString(4),
+                            Created = reader.GetDateTime(5),
+                            Priority = Priority[reader.GetInt32(6)],
+                            State = State[reader.GetInt32(7)],
+                            Description = reader.GetString(8)
+                        });
+                    }
                 }
+                else throw new NoResultsFoundException();
 
                 // Return results
                 return data;
