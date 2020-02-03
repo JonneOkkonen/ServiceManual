@@ -12,8 +12,14 @@ namespace ServiceManual.Controllers.v1
         [HttpGet(APIRoute.Tasks.GetAll)]
         public IActionResult GetAll()
         {
-            Database db = new Database();
-            return Ok(db.GetMaintenanceTasks());
+            try
+            {
+                Database db = new Database();
+                return Ok(db.GetMaintenanceTasks());
+            }catch(Exception e)
+            {
+                return Ok(e.Message);
+            }
         }
     }
 }

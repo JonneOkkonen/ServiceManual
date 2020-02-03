@@ -84,21 +84,37 @@ namespace ServiceManual
                 conn.Open();
 
                 // Run the SQL Query
-                string query = "SELECT * FROM MaintenanceTask";
-                if (id != null) query += $" WHERE TaskID = {id}";
+                string query = "SELECT " +
+                                "TaskID, " +
+                                "Device.DeviceID, " +
+                                "Device.Name, " +
+                                "Device.Year, " +
+                                "Device.Type, " +
+                                "Created, " +
+                                "Priority, " +
+                                "State, " +
+                                "Description " +
+                                "FROM `MaintenanceTask` " +
+                                "INNER JOIN Device " +
+                                "ON MaintenanceTask.DeviceID = Device.DeviceID";
+                if (id != null) query += $" WHERE MaintenanceTask.TaskID = {id}";
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
 
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.Add(new MaintenanceTask(
-                        reader.GetInt32(0),
-                        reader.GetInt32(1),
-                        reader.GetDateTime(2),
-                        Priority[reader.GetInt32(3)],
-                        State[reader.GetInt32(4)],
-                        reader.GetString(5)));
+                    data.Add(new MaintenanceTask {
+                        TaskID = reader.GetInt32(0),
+                        DeviceID = reader.GetInt32(1),
+                        Name = reader.GetString(2),
+                        Year = reader.GetInt32(3),
+                        Type = reader.GetString(4),
+                        Created = reader.GetDateTime(5),
+                        Priority = Priority[reader.GetInt32(6)],
+                        State = State[reader.GetInt32(7)],
+                        Description = reader.GetString(8)
+                    });
                 }
 
                 // Return results

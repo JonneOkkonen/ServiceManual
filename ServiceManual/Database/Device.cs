@@ -9,6 +9,8 @@ namespace ServiceManual
         public int Year { get; set; }
         public string Type { get; set; }
 
+        public Device(){}
+
         public Device(int id, string name, int year, string type)
         {
             DeviceID = id;
