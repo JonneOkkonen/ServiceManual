@@ -105,6 +105,8 @@ namespace ServiceManual
                                 "ON MaintenanceTask.DeviceID = Device.DeviceID";
                 if (id != null) query += $" WHERE MaintenanceTask.TaskID = {id}";
                 if (deviceID != null) query += $" WHERE Device.DeviceID = {deviceID}";
+                // Order with priority and created
+                query += " ORDER BY Priority DESC, Created DESC";
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
 
                 // Read the result of the query
