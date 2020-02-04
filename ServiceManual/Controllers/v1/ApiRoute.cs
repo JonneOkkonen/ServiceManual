@@ -13,5 +13,11 @@ namespace ServiceManual.Controllers.v1
             public const string GetOne = Base + "/task/{taskID}";
             public const string GetAllForDevice = Base + "/tasks/{deviceID}";
         }
+
+        public static class Devices
+        {
+            public const string GetAll = Base + "/devices";
+            public const string GetOne = Base + "/device/{deviceID}";
+        }
     }
 }
