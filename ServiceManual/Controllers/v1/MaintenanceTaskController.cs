@@ -178,6 +178,12 @@ namespace ServiceManual.Controllers.v1
             {
                 Database db = new Database();
 
+                // Check if Task Exists
+                if (!db.MaintenanceTaskExists(taskID))
+                {
+                    return NotFound(new ErrorMessage($"Task with ID({taskID}) Not Found"));
+                }
+
                 // Check that DeviceID is integer
                 if (!int.TryParse(deviceID.ToString(), out int deviceIDOut))
                 {
