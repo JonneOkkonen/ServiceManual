@@ -35,7 +35,7 @@ namespace ServiceManual.Controllers.v1
         /// Get single Maintenance Task
         /// </summary>
         /// <returns></returns>
-        [HttpGet(APIRoute.Tasks.GetOne)]
+        [HttpGet(APIRoute.Tasks.Get)]
         public IActionResult GetOne([FromRoute]int? taskID)
         {
             try
@@ -78,6 +78,80 @@ namespace ServiceManual.Controllers.v1
 
                 // Return all tasks for given deviceID
                 return Ok(db.GetMaintenanceTasks(null, ID));
+            }
+            catch (Exception e)
+            {
+                return Ok(new ErrorMessage(e.Message));
+            }
+        }
+
+        /// <summary>
+        /// Add New Maintenance Task
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="deviceID"></param>
+        /// <param name="created"></param>
+        /// <param name="priority"></param>
+        /// <param name="state"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        [HttpPost(APIRoute.Tasks.Create)]
+        public IActionResult Create([FromBody] int taskID, int deviceID, string created, 
+                                    int priority, int state, string description)
+        {
+            try
+            {
+                Database db = new Database();
+
+                // Check that DeviceID is integer
+                if (!int.TryParse(deviceID.ToString(), out int deviceIDOut))
+                {
+                    throw new IncorrectTypeException("DeviceID", IncorrectTypeException.Types.Int);
+                }
+
+                // Check if Created Date is in DateTime format
+                if (!DateTime.TryParse(created, out DateTime createdOut))
+                {
+                    throw new IncorrectTypeException("Created", IncorrectTypeException.Types.DateTime);
+                }
+
+                // Check if Priority is integer
+                if(!int.TryParse(priority.ToString(), out int priorityOut))
+                {
+                    throw new IncorrectTypeException("Priority", IncorrectTypeException.Types.Int);
+                }
+
+                // Check if State is integer
+                if(!int.TryParse(state.ToString(), out int stateOut))
+                {
+                    throw new IncorrectTypeException("State", IncorrectTypeException.Types.Int);
+                }
+
+                // Create MaintenanceTask from Data
+                MaintenanceTask task = new MaintenanceTask {
+                    TaskID = taskID,
+                    DeviceID = deviceIDOut,
+                    Created = createdOut,
+                    Priority = MaintenanceTask.PriorityList[priorityOut],
+                    State = MaintenanceTask.StateList[stateOut],
+                    Description = description
+                };
+
+                // Try saving maintenance task to database
+                int result = db.AddMaintenanceTask(task);
+
+                // Check if adding was successfull
+                if (result == 0) throw new Exception("INSERT Failed");
+
+                // Add MaintenanceTask URL to Location parameter to response header
+                string baseURL = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+                string locationURL = baseURL + "/" + APIRoute.Tasks.Get.Replace("{taskID}", result.ToString());
+
+                return Created(locationURL, task);
+            }
+            catch (IncorrectTypeException e)
+            {
+                return Ok(new ErrorMessage(e.Message));
             }
             catch (Exception e)
             {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using MySql.Data.MySqlClient;
 using ServiceManual.Exceptions;
 
@@ -9,20 +7,6 @@ namespace ServiceManual
 {
     public class Database
     {
-        // Priority levels from 1-3
-        // 1: Lievä, 2: Tärkeä, 3: Kriittinen
-        private static readonly string[] Priority = new[]
-        {
-            "Undefined", "Lievä", "Tärkeä", "Kriittinen"
-        };
-
-        // State levels from 0-1
-        // 0: Huollettu, 1: Avoin
-        private static readonly string[] State = new[]
-{
-            "Huollettu", "Avoin"
-        };
-
         /// <summary>
         /// Get single or list of devices from database
         /// </summary>
@@ -124,8 +108,8 @@ namespace ServiceManual
                             Year = reader.GetInt32(3),
                             Type = reader.GetString(4),
                             Created = reader.GetDateTime(5),
-                            Priority = Priority[reader.GetInt32(6)],
-                            State = State[reader.GetInt32(7)],
+                            Priority = MaintenanceTask.PriorityList[reader.GetInt32(6)],
+                            State = MaintenanceTask.StateList[reader.GetInt32(7)],
                             Description = reader.GetString(8)
                         });
                     }
@@ -139,6 +123,40 @@ namespace ServiceManual
             {
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Add new maintenance task to database
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns>True/false depending on result</returns>
+        public int AddMaintenanceTask(MaintenanceTask task)
+        {
+            // Insert Data to Database
+            int result = ExecuteCmd($"INSERT INTO MaintenanceTask(DeviceID, Created, Priority, State, Description) " +
+                                    $"VALUES({task.DeviceID},'{task.Created.ToString("yyyy-MM-dd HH:mm:ss")}', " +
+                                    $"{Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)}," +
+                                    $"{Array.IndexOf(MaintenanceTask.StateList, task.State)}, '{task.Description}');");
+
+            // If adding was successfull get id for that object
+            if(result > 0)
+            {
+                // Create Connection and open it
+                using MySqlConnection conn = new MySqlConnection(GetConnectionString());
+                conn.Open();
+
+                // Run the SQL Query
+                using MySqlCommand cmd = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
+
+                // Read the result of the query
+                using MySqlDataReader reader = cmd.ExecuteReader();
+
+                // Read ID
+                reader.Read();
+                result = Convert.ToInt32(reader.GetValue(0));
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -162,9 +180,9 @@ namespace ServiceManual
                 // Return results
                 return reader.RecordsAffected;
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                throw e;
             }
         }
 
@@ -175,7 +193,7 @@ namespace ServiceManual
         private string GetConnectionString()
         {
             string server = "localhost";
-            string database = "ServiceManual";
+            string database = "servicemanual";
             string uid = "root";
             string password = "";
             return string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};", server, database, uid, password);
