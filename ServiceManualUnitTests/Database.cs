@@ -1,11 +1,29 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceManual;
+using System.Configuration;
 
 namespace ServiceManualUnitTests
 {
     [TestClass]
     public class DatabaseTests
     {
+        [TestMethod]
+        public void GetConnectionString()
+        {
+            // Generate Connection String
+            string server = "localhost";
+            string database = "servicemanual";
+            string uid = "root";
+            string password = "";
+            string expected = string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};", server, database, uid, password);
+
+            // Get Connection String
+            string actual = Database.GetConnectionString();
+
+            // Check if they are equal
+            Assert.AreEqual(expected, actual);
+        }
+
         [TestMethod]
         public void MaintenanceTaskExist()
         {
