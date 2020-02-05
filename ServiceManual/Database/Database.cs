@@ -160,6 +160,22 @@ namespace ServiceManual
         }
 
         /// <summary>
+        /// Update maintenance task data to database
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public bool UpdateMaintenanceTask(MaintenanceTask task)
+        {
+            // Update Data to Database
+            int result = ExecuteCmd($"UPDATE MaintenanceTask SET DeviceID={task.DeviceID}, " +
+                                    $"Created='{task.Created.ToString("yyyy-MM-dd HH:mm:ss")}', " +
+                                    $"Priority={Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)}," +
+                                    $"State={Array.IndexOf(MaintenanceTask.StateList, task.State)}," +
+                                    $"Description='{task.Description}' WHERE TaskID={task.TaskID}");
+            return result > 0;
+        }
+
+        /// <summary>
         /// Execute MySQL Queries.
         /// </summary>
         /// <param name="query"></param>

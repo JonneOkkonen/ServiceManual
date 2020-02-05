@@ -158,5 +158,77 @@ namespace ServiceManual.Controllers.v1
                 return Ok(new ErrorMessage(e.Message));
             }
         }
+
+        /// <summary>
+        /// Update maintenance task data to database
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <param name="id"></param>
+        /// <param name="deviceID"></param>
+        /// <param name="created"></param>
+        /// <param name="priority"></param>
+        /// <param name="state"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        [HttpPut(APIRoute.Tasks.Update)]
+        public IActionResult Update([FromRoute]int taskID, [FromBody]int id, int deviceID, string created,
+                                    int priority, int state, string description)
+        {
+            try
+            {
+                Database db = new Database();
+
+                // Check that DeviceID is integer
+                if (!int.TryParse(deviceID.ToString(), out int deviceIDOut))
+                {
+                    throw new IncorrectTypeException("DeviceID", IncorrectTypeException.Types.Int);
+                }
+
+                // Check if Created Date is in DateTime format
+                if (!DateTime.TryParse(created, out DateTime createdOut))
+                {
+                    throw new IncorrectTypeException("Created", IncorrectTypeException.Types.DateTime);
+                }
+
+                // Check if Priority is integer
+                if (!int.TryParse(priority.ToString(), out int priorityOut))
+                {
+                    throw new IncorrectTypeException("Priority", IncorrectTypeException.Types.Int);
+                }
+
+                // Check if State is integer
+                if (!int.TryParse(state.ToString(), out int stateOut))
+                {
+                    throw new IncorrectTypeException("State", IncorrectTypeException.Types.Int);
+                }
+
+                // Create MaintenanceTask from Data
+                MaintenanceTask task = new MaintenanceTask
+                {
+                    TaskID = taskID,
+                    DeviceID = deviceIDOut,
+                    Created = createdOut,
+                    Priority = MaintenanceTask.PriorityList[priorityOut],
+                    State = MaintenanceTask.StateList[stateOut],
+                    Description = description
+                };
+
+                // Try updating maintenance task data to database
+                bool result = db.UpdateMaintenanceTask(task);
+
+                // Check if adding was successfull
+                if (!result) throw new Exception("UPDATE Failed");
+
+                return Ok(task);
+            }
+            catch (IncorrectTypeException e)
+            {
+                return Ok(new ErrorMessage(e.Message));
+            }
+            catch (Exception e)
+            {
+                return Ok(new ErrorMessage(e.Message));
+            }
+        }
     }
 }
