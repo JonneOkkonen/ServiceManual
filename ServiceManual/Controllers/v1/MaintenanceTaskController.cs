@@ -230,5 +230,38 @@ namespace ServiceManual.Controllers.v1
                 return Ok(new ErrorMessage(e.Message));
             }
         }
+
+        /// <summary>
+        /// Delete Maintenance Task from Database
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <returns></returns>
+        [HttpDelete(APIRoute.Tasks.Delete)]
+        public IActionResult Delete([FromRoute]int taskID)
+        {
+            try
+            {
+                Database db = new Database();
+
+                // Check if Task Exists
+                if(!db.MaintenanceTaskExists(taskID))
+                {
+                    return NotFound(new ErrorMessage($"Task with ID({taskID}) Not Found"));
+                }
+
+                // Delete Maintenance Task
+                if(db.DeleteMaintenanceTask(taskID))
+                {
+                    return NoContent();
+                }else
+                {
+                    return Ok("DELETE Failed");
+                }
+            }
+            catch (Exception e)
+            {
+                return Ok(new ErrorMessage(e.Message));
+            }
+        }
     }
 }

@@ -176,6 +176,27 @@ namespace ServiceManual
         }
 
         /// <summary>
+        /// Delete maintenance task from database
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <returns></returns>
+        public bool DeleteMaintenanceTask(int taskID)
+        {
+            // Delete Data from Database
+            int result = ExecuteCmd($"DELETE FROM MaintenanceTask WHERE taskID = {taskID}");
+
+            return result > 0;
+        }
+
+        public bool MaintenanceTaskExists(int taskID)
+        {
+            // Select Data from Database
+            int result = ExecuteCmd($"SELECT * FROM MaintenanceTask WHERE taskID = {taskID}");
+
+            return result > 0;
+        }
+
+        /// <summary>
         /// Execute MySQL Queries.
         /// </summary>
         /// <param name="query"></param>
