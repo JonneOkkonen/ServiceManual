@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ServiceManual.Config;
 
 namespace ServiceManual
 {
@@ -50,6 +44,11 @@ namespace ServiceManual
             {
                 endpoints.MapControllers();
             });
+
+            // Configure DatabaseConnections
+            DatabaseConfig dbConfig = new DatabaseConfig();
+            Configuration.GetSection(nameof(DatabaseConfig)).Bind(dbConfig);
+            Database.Config = dbConfig;
 
             // Configure Swagger
             SwaggerOptions swagger = new SwaggerOptions();

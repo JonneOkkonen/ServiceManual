@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using ServiceManual.Config;
 using ServiceManual.Exceptions;
 
 namespace ServiceManual
 {
     public class Database
     {
+        /// <summary>
+        /// DatabaseConfig class holds database connection details
+        /// </summary>
+        public static DatabaseConfig Config;
+
         /// <summary>
         /// Get single or list of devices from database
         /// </summary>
@@ -188,12 +194,30 @@ namespace ServiceManual
             return result > 0;
         }
 
+        /// <summary>
+        ///  Check if MaintenanceTask Exists
+        /// </summary>
+        /// <param name="taskID"></param>
+        /// <returns></returns>
         public bool MaintenanceTaskExists(int taskID)
         {
-            // Select Data from Database
-            int result = ExecuteCmd($"SELECT * FROM MaintenanceTask WHERE taskID = {taskID}");
+            try
+            {
+                // Create Connection and open it
+                using MySqlConnection conn = new MySqlConnection(GetConnectionString());
+                conn.Open();
+                // Run the SQL Query
+                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM MaintenanceTask WHERE taskID = {taskID}", conn);
+                // Read the result of the query
+                using MySqlDataReader reader = cmd.ExecuteReader();
 
-            return result > 0;
+                // Select Data from Database
+                return reader.HasRows;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         /// <summary>
@@ -227,13 +251,9 @@ namespace ServiceManual
         /// Create and return Connection string
         /// </summary>
         /// <returns></returns>
-        private string GetConnectionString()
+        public static string GetConnectionString()
         {
-            string server = "localhost";
-            string database = "servicemanual";
-            string uid = "root";
-            string password = "";
-            return string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};", server, database, uid, password);
+            return string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};", Config.Server, Config.Database, Config.UserID, Config.Password);
         }
     }
 }
