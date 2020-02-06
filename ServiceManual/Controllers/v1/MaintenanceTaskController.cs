@@ -96,12 +96,18 @@ namespace ServiceManual.Controllers.v1
         /// <param name="description"></param>
         /// <returns></returns>
         [HttpPost(APIRoute.Tasks.Create)]
-        public IActionResult Create([FromBody] int taskID, int deviceID, string created, 
+        public IActionResult Create([FromRoute]string apiKey, [FromBody]int taskID, int deviceID, string created, 
                                     int priority, int state, string description)
         {
             try
             {
                 Database db = new Database();
+
+                // Check API-key
+                if (!db.CheckAPIKey(apiKey))
+                {
+                    return NotFound(new ErrorMessage($"API-key was invalid"));
+                }
 
                 // Check that DeviceID is integer
                 if (!int.TryParse(deviceID.ToString(), out int deviceIDOut))
@@ -171,12 +177,18 @@ namespace ServiceManual.Controllers.v1
         /// <param name="description"></param>
         /// <returns></returns>
         [HttpPut(APIRoute.Tasks.Update)]
-        public IActionResult Update([FromRoute]int taskID, [FromBody]int id, int deviceID, string created,
-                                    int priority, int state, string description)
+        public IActionResult Update([FromRoute]string apiKey, int taskID, [FromBody]int id, int deviceID, 
+                                    string created, int priority, int state, string description)
         {
             try
             {
                 Database db = new Database();
+
+                // Check API-key
+                if (!db.CheckAPIKey(apiKey))
+                {
+                    return NotFound(new ErrorMessage($"API-key was invalid"));
+                }
 
                 // Check if Task Exists
                 if (!db.MaintenanceTaskExists(taskID))
@@ -243,14 +255,20 @@ namespace ServiceManual.Controllers.v1
         /// <param name="taskID"></param>
         /// <returns></returns>
         [HttpDelete(APIRoute.Tasks.Delete)]
-        public IActionResult Delete([FromRoute]int taskID)
+        public IActionResult Delete([FromRoute]string apiKey, int taskID)
         {
             try
             {
                 Database db = new Database();
 
+                // Check API-key
+                if (!db.CheckAPIKey(apiKey))
+                {
+                    return NotFound(new ErrorMessage($"API-key was invalid"));
+                }
+
                 // Check if Task Exists
-                if(!db.MaintenanceTaskExists(taskID))
+                if (!db.MaintenanceTaskExists(taskID))
                 {
                     return NotFound(new ErrorMessage($"Task with ID({taskID}) Not Found"));
                 }

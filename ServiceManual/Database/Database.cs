@@ -221,6 +221,32 @@ namespace ServiceManual
         }
 
         /// <summary>
+        /// Check If API key exists
+        /// </summary>
+        /// <param name="apiKey"></param>
+        /// <returns></returns>
+        public bool CheckAPIKey(string apiKey)
+        {
+            try
+            {
+                // Create Connection and open it
+                using MySqlConnection conn = new MySqlConnection(GetConnectionString());
+                conn.Open();
+                // Run the SQL Query
+                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM Users WHERE API_key = '{apiKey}'", conn);
+                // Read the result of the query
+                using MySqlDataReader reader = cmd.ExecuteReader();
+
+                // Select Data from Database
+                return reader.HasRows;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
         /// Execute MySQL Queries.
         /// </summary>
         /// <param name="query"></param>
