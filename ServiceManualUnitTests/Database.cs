@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceManual;
-using System.Configuration;
 
 namespace ServiceManualUnitTests
 {
@@ -20,7 +19,7 @@ namespace ServiceManualUnitTests
             };
         }
 
-    [TestMethod]
+        [TestMethod]
         public void MaintenanceTaskExist()
         {
             LoadConnectionStringManually();
@@ -32,6 +31,21 @@ namespace ServiceManualUnitTests
 
             // Check false output
             bool actual2 = db.MaintenanceTaskExists(9999);
+            Assert.AreEqual(false, actual2);
+        }
+
+        [TestMethod]
+        public void CheckAPIKey()
+        {
+            LoadConnectionStringManually();
+            Database db = new Database();
+
+            // Check true output
+            bool actual = db.CheckAPIKey("askjlkjl1234895389fsdjsdfjhksdfjhk383notrealkey");
+            Assert.AreEqual(true, actual);
+
+            // Check false output
+            bool actual2 = db.CheckAPIKey("asdasd");
             Assert.AreEqual(false, actual2);
         }
     }
