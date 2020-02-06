@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceManual;
+using System.Collections.Generic;
 
 namespace ServiceManualUnitTests
 {
@@ -56,6 +57,19 @@ namespace ServiceManualUnitTests
             // Run Update command that changes 1 row. Check if it actually changes one row.
             int actual = db.ExecuteCmd("UPDATE Users SET userID=2 WHERE userID = 2");
             Assert.AreEqual(1, actual);
+        }
+
+        [TestMethod]
+        public void GetDevices()
+        {
+            // Get list of devices
+            List<Device> devices = db.GetDevices();
+
+            // Check if first device data is correct
+            Assert.AreEqual(3736, devices[0].DeviceID);
+            Assert.AreEqual("Device 0", devices[0].Name);
+            Assert.AreEqual(2004, devices[0].Year);
+            Assert.AreEqual("Type19", devices[0].Type);
         }
     }
 }
