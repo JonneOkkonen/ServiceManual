@@ -84,5 +84,23 @@ namespace ServiceManualUnitTests
             Assert.AreEqual(1987, devices[0].Year);
             Assert.AreEqual("Type2", devices[0].Type);
         }
+
+        [TestMethod]
+        public void GetMaintenanceTasks()
+        {
+            // Get list of maintenance tasks
+            List<MaintenanceTask> tasks = db.GetMaintenanceTasks();
+
+            // Check if there is data
+            Assert.IsNotNull(tasks[0].TaskID);
+            Assert.IsNotNull(tasks[0].DeviceID);
+            Assert.IsNotNull(tasks[0].Name);
+            Assert.IsNotNull(tasks[0].Year);
+            Assert.IsNotNull(tasks[0].Type);
+            Assert.IsNotNull(tasks[0].Created);
+            Assert.IsNotNull(tasks[0].Priority);
+            Assert.IsNotNull(tasks[0].State);
+            Assert.IsNotNull(tasks[0].Description);
+        }
     }
 }
