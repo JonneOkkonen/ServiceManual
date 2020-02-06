@@ -15,9 +15,6 @@
     <Folder Include="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="appsettings.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Controllers\ServiceManualController.cs" />
   </ItemGroup>
   <ItemGroup>
