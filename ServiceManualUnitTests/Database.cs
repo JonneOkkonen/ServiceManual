@@ -71,5 +71,18 @@ namespace ServiceManualUnitTests
             Assert.AreEqual(2004, devices[0].Year);
             Assert.AreEqual("Type19", devices[0].Type);
         }
+
+        [TestMethod]
+        public void GetSingleDevices()
+        {
+            // Get single devices
+            List<Device> devices = db.GetDevices(3737);
+
+            // Check if device data is correct
+            Assert.AreEqual(3737, devices[0].DeviceID);
+            Assert.AreEqual("Device 1", devices[0].Name);
+            Assert.AreEqual(1987, devices[0].Year);
+            Assert.AreEqual("Type2", devices[0].Type);
+        }
     }
 }
