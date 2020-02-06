@@ -7,30 +7,27 @@ namespace ServiceManualUnitTests
     [TestClass]
     public class DatabaseTests
     {
-        [TestMethod]
-        public void GetConnectionString()
+        /// <summary>
+        /// Connection String has to be set manually because UnitTests can't get them from configuration
+        /// </summary>
+        public void LoadConnectionStringManually()
         {
-            // Generate Connection String
-            string server = "localhost";
-            string database = "servicemanual";
-            string uid = "root";
-            string password = "";
-            string expected = string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};", server, database, uid, password);
-
-            // Get Connection String
-            string actual = Database.GetConnectionString();
-
-            // Check if they are equal
-            Assert.AreEqual(expected, actual);
+            Database.Config = new ServiceManual.Config.DatabaseConfig
+            {
+                Server = "localhost",
+                Database = "ServiceManual",
+                UserID = "root"
+            };
         }
 
-        [TestMethod]
+    [TestMethod]
         public void MaintenanceTaskExist()
         {
+            LoadConnectionStringManually();
             Database db = new Database();
 
             // Check true output
-            bool actual = db.MaintenanceTaskExists(1);
+            bool actual = db.MaintenanceTaskExists(2);
             Assert.AreEqual(true, actual);
 
             // Check false output
