@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceManual;
+using System;
 using System.Collections.Generic;
 
 namespace ServiceManualUnitTests
@@ -101,6 +102,24 @@ namespace ServiceManualUnitTests
             Assert.IsNotNull(tasks[0].Priority);
             Assert.IsNotNull(tasks[0].State);
             Assert.IsNotNull(tasks[0].Description);
+        }
+
+        [TestMethod]
+        public void GetSingleMaintenanceTask()
+        {
+            // Get list of maintenance tasks
+            List<MaintenanceTask> tasks = db.GetMaintenanceTasks(2);
+
+            // Check if data is correct
+            Assert.AreEqual(2, tasks[0].TaskID);
+            Assert.AreEqual(3740, tasks[0].DeviceID);
+            Assert.AreEqual("Device 4", tasks[0].Name);
+            Assert.AreEqual(1995, tasks[0].Year);
+            Assert.AreEqual("Type 8", tasks[0].Type);
+            Assert.AreEqual(Convert.ToDateTime("2020-01-15 12:42:01"), tasks[0].Created);
+            Assert.AreEqual("Tärkeä", tasks[0].Priority);
+            Assert.AreEqual("Avoin", tasks[0].State);
+            Assert.AreEqual("Description 2", tasks[0].Description);
         }
     }
 }
