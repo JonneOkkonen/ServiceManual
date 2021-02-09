@@ -70,6 +70,30 @@ LOCK TABLES `MaintenanceTask` WRITE;
 INSERT INTO `MaintenanceTask` VALUES (1,3736,'2020-01-02 15:42:01',3,1,'Description 1'),(2,3740,'2020-01-15 12:42:01',2,1,'Description 2'),(3,3736,'2019-12-15 10:40:01',1,0,'Description 3');
 /*!40000 ALTER TABLE `MaintenanceTask` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Users` (
+  `userID` int(11) NOT NULL AUTO_INCREMENT,
+  `API_key` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`userID`)
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Users`
+--
+
+LOCK TABLES `Users` WRITE;
+/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+INSERT INTO `Users` VALUES (1, "FFZJBKM1TTvMmWp6ui3WDrclk5QBUDwWiSbpk1mLxJhuhJrslGfQORrG");
+/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
