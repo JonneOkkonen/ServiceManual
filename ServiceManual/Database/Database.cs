@@ -33,8 +33,11 @@ namespace ServiceManual
 
                 // Run the SQL Query
                 string query = "SELECT * FROM Device";
-                if (id != null) query += $" WHERE DeviceID = {id}";
+                if (id != null) query += $" WHERE DeviceID=@id";
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                // Add parameters
+                if (id != null) cmd.Parameters.AddWithValue("@id", id);
 
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
@@ -93,15 +96,19 @@ namespace ServiceManual
                                 "FROM `MaintenanceTask` " +
                                 "INNER JOIN Device " +
                                 "ON MaintenanceTask.DeviceID = Device.DeviceID";
-                if (id != null) query += $" WHERE MaintenanceTask.TaskID = {id}";
-                if (deviceID != null) query += $" WHERE Device.DeviceID = {deviceID}";
+                if (id != null) query += $" WHERE MaintenanceTask.TaskID=@id";
+                if (deviceID != null) query += $" WHERE Device.DeviceID=@deviceID";
 
                 // Order with priority and created
                 query += " ORDER BY Priority DESC, Created DESC";
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
 
-                // Read the result of the query
-                using MySqlDataReader reader = cmd.ExecuteReader();
+                // Add parameters
+                if (id != null) cmd.Parameters.AddWithValue("@id", id);
+                if (deviceID != null) cmd.Parameters.AddWithValue("@deviceID", deviceID);
+
+                    // Read the result of the query
+                    using MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.HasRows)
                 {
                     while (reader.Read())
@@ -138,11 +145,17 @@ namespace ServiceManual
         /// <returns>True/false depending on result</returns>
         public int AddMaintenanceTask(MaintenanceTask task)
         {
-            // Insert Data to Database
+            // Create parameters list
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@deviceID", task.DeviceID));
+            parameters.Add(new MySqlParameter("@created", task.Created.ToString("yyyy-MM-dd HH:mm:ss")));
+            parameters.Add(new MySqlParameter("@priority", Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)));
+            parameters.Add(new MySqlParameter("@state", Array.IndexOf(MaintenanceTask.StateList, task.State)));
+            parameters.Add(new MySqlParameter("@description", task.Description));
+
+            // Execute Command
             int result = ExecuteCmd($"INSERT INTO MaintenanceTask(DeviceID, Created, Priority, State, Description) " +
-                                    $"VALUES({task.DeviceID},'{task.Created.ToString("yyyy-MM-dd HH:mm:ss")}', " +
-                                    $"{Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)}," +
-                                    $"{Array.IndexOf(MaintenanceTask.StateList, task.State)}, '{task.Description}');");
+                                    $"VALUES(@deviceID, @created, @priority, @state, @description);", parameters);
 
             // If adding was successfull get id for that object
             if(result > 0)
@@ -172,12 +185,19 @@ namespace ServiceManual
         /// <returns></returns>
         public bool UpdateMaintenanceTask(MaintenanceTask task)
         {
+            // Create parameters list
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            parameters.Add(new MySqlParameter("@deviceID", task.DeviceID));
+            parameters.Add(new MySqlParameter("@created", task.Created.ToString("yyyy-MM-dd HH:mm:ss")));
+            parameters.Add(new MySqlParameter("@priority", Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)));
+            parameters.Add(new MySqlParameter("@state", Array.IndexOf(MaintenanceTask.StateList, task.State)));
+            parameters.Add(new MySqlParameter("@description", task.Description));
+            parameters.Add(new MySqlParameter("@taskID", task.TaskID));
+
             // Update Data to Database
-            int result = ExecuteCmd($"UPDATE MaintenanceTask SET DeviceID={task.DeviceID}, " +
-                                    $"Created='{task.Created.ToString("yyyy-MM-dd HH:mm:ss")}', " +
-                                    $"Priority={Array.IndexOf(MaintenanceTask.PriorityList, task.Priority)}," +
-                                    $"State={Array.IndexOf(MaintenanceTask.StateList, task.State)}," +
-                                    $"Description='{task.Description}' WHERE TaskID={task.TaskID}");
+            int result = ExecuteCmd($"UPDATE MaintenanceTask SET DeviceID=@deviceID, " +
+                                    $"Created=@created, Priority=@priority, State=@state, Description=@description WHERE TaskID=@taskID;", parameters);
+
             return result > 0;
         }
 
@@ -207,7 +227,11 @@ namespace ServiceManual
                 using MySqlConnection conn = new MySqlConnection(GetConnectionString());
                 conn.Open();
                 // Run the SQL Query
-                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM MaintenanceTask WHERE taskID = {taskID}", conn);
+                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM MaintenanceTask WHERE taskID=@taskID", conn);
+
+                // Add parameters
+                cmd.Parameters.AddWithValue("@taskID", taskID);
+
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
 
@@ -233,7 +257,11 @@ namespace ServiceManual
                 using MySqlConnection conn = new MySqlConnection(GetConnectionString());
                 conn.Open();
                 // Run the SQL Query
-                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM Users WHERE API_key = '{apiKey}'", conn);
+                using MySqlCommand cmd = new MySqlCommand($"SELECT * FROM Users WHERE API_key=@apikey", conn);
+
+                // Add parameters
+                cmd.Parameters.AddWithValue("@apikey", apiKey);
+
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
 
@@ -262,6 +290,39 @@ namespace ServiceManual
                 conn.Open();
                 // Run the SQL Query
                 using MySqlCommand cmd = new MySqlCommand(query, conn);
+                // Read the result of the query
+                using MySqlDataReader reader = cmd.ExecuteReader();
+                // Return results
+                return reader.RecordsAffected;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Execute MySQL Queries with Params
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public int ExecuteCmd(string query, List<MySqlParameter> parameters)
+        {
+            try
+            {
+                // Create Connection and open it
+                using MySqlConnection conn = new MySqlConnection(GetConnectionString());
+                conn.Open();
+                // Run the SQL Query
+                using MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                // Add Parameters
+                foreach(MySqlParameter param in parameters)
+                {
+                    cmd.Parameters.Add(param);
+                }
+
                 // Read the result of the query
                 using MySqlDataReader reader = cmd.ExecuteReader();
                 // Return results
