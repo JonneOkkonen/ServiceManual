@@ -1,46 +1,57 @@
 # ServiceManual
 Service Manual .NET Core API Demo
 
-Osoite API:n Swagger Dokumentaatioon:  
-http://servicemanual.jonneokkonen.com/swagger/index.html
+Address for API Swagger Documentation:  
+http://servicemanual.jonneokkonen.com/swagger/
 
-API:n Base URL: http://servicemanual.jonneokkonen.com/api/v1
+API Base URL: http://servicemanual.jonneokkonen.com/
+
+# Installation
+
+* Create MySQL Database named: `ServiceManual`
+* Create tables and insert rows with SQL-script file (link below)
+* Update database credentials to `ServiceManual/appsettings.Development.json`
+* Run Code in Visual Studio
+  
+  `HINT! There is one APIKey premade in the user's table`
 
 # API
 
-API:n kaikki GET-toiminnot, joilla vain luetaan dataa ovat täysin avoimet. Datan muuttaviin toimintoihin kuten lisäys, luokkaus ja poisto tarvitaan API-avain. Testausta varten olen toimittanut sen tarvittaville henkilöille.
+API's all GET-requests, that only read data are open endpoints. All data modifying functions like add, update, and delete functions requires API-key. For testing purposes, I have delivered keys for all necessary personnel.
 
-## Tarkempaa tietoa toiminnoista
+## More detailed information about the functions
 
 ![](doc/Swagger-frontpage.JPG)
 
 ## Device
-API:ssa on tällä hetkellä toteutettu ylimääräisinä toimintoina pari hakutoimintoa myös laitteille. Näiden toimintojen avulla voidaan hakea tietokannasta kaikki laitteet tai vain yksi tietty laite.
+
+API has currently a couple of extra search functions for devices, with these functions you can get all devices all certain device from the database.
 
 ## Maintenance Task
 
-Huoltotehtävien noutoon on toteutettu kaikki perustoiminnot, kuten kaikkien tehtävien hakeminen, tietyn tehtävän hakeminen, kaikkien tehtävien hakeminen tietylle laitteelle sekä tehtävien lisääminen, muokkaaminen ja poistaminen.   
-Huoltotehtävien listaus on suodatettu kriittisyyden mukaan korkeimmasta pienempään sekä sen jälkeen kirjausajankohdan mukaisesti uusimmasta vanhimpaan.
+All basic functions have been implemented for retrieving maintenance tasks, like retrieve all tasks or certain tasks, retrieving all tasks for certain devices, and adding, updating, and deleting tasks. Maintenance task lists are ordered from highest criticality to lowest and then from newest to oldest according to the creation date. 
 
-# Tietokanta
+# Database
 
-Tietokanta on toteutettu MySQL, johon yhteyden loin itse Database luokan avulla, hyödyntämällä MySql.Data.MySqlClient kirjastoa. Parempi tapa yhteyksien luomiseen ja tietokanta operaatioihin olisi ollut Entity Framework Core ja EF Migraatiot. En kuitenkaan kerinnyt tutustua kyseiseen kirjastoon tarpeeksi ajoissa, joka ei ollut aiemmin minulle tuttu, ja tästä syystä päätin tehdä tietokanta yhteydet itse manuaalisesti.
+The Database has been done with MySQL, where I created connections myself with the Database class. It uses `MySql.Data.MySqlClient` library. A better way to implement database connections and operations would have been Entity Framework Core and EF Migrations. However, I did not have time to get familiar with that library, which wasn't familiar to me before, and that's why I decided to do database connections myself manually.
 
-## ER-kaavio
+## ER-Diagram
 ![](doc/ServiceManual_ER_kaavio.png)
 
 ## Device (Laite)
 DeviceID (LaiteID)  
 Name (Nimi)  
-Year (Vuosi) Muoto:'YYYY'  
+Year (Vuosi) Format:'YYYY'  
 Type (Tyyppi) 
 
 ## Maintenance Task (Huoltotehtävä)
 TaskID (TehtäväID)  
 DeviceID (LaiteID)  
-Created (Lisäyspäivämäärä) Muoto:'YYYY-mm-dd HH:mm:ss'  
-Priority (Kriittisyys) Vaihtoehdot: 1, 2 tai 3 (1: Lievät, 2: Tärkeät, 3: Kriittiset)  
-State (Tila) Vaihtoehdot: 0 tai 1 (0: Huollettu, 1: Avoin)  
+Created (Lisäyspäivämäärä) Format:'YYYY-mm-dd HH:mm:ss'  
+Priority (Kriittisyys) Options: 1, 2 tai 3 (1: Lievät, 2: Tärkeät, 3: Kriittiset)  
+State (Tila) Options: 0 tai 1 (0: Huollettu, 1: Avoin)  
 Description (Kuvaus)
 
-[Linkki SQL-tiedostoon](doc/ServiceManual.sql)
+## SQL Script
+
+[Link to SQL-script](doc/ServiceManual.sql)
