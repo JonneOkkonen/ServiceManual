@@ -96,7 +96,7 @@ namespace ServiceManual.Controllers.v1
         /// <param name="description"></param>
         /// <returns></returns>
         [HttpPost(APIRoute.Tasks.Create)]
-        public IActionResult Create([FromRoute]string apiKey, [FromBody]int taskID, int deviceID, string created, 
+        public IActionResult Create([FromHeader]string apiKey, [FromBody]int taskID, int deviceID, string created, 
                                     int priority, int state, string description)
         {
             try
@@ -177,7 +177,7 @@ namespace ServiceManual.Controllers.v1
         /// <param name="description"></param>
         /// <returns></returns>
         [HttpPut(APIRoute.Tasks.Update)]
-        public IActionResult Update([FromRoute]string apiKey, int taskID, [FromBody]int id, int deviceID, 
+        public IActionResult Update([FromHeader]string apiKey, int taskID, [FromBody]int id, int deviceID, 
                                     string created, int priority, int state, string description)
         {
             try
@@ -255,7 +255,7 @@ namespace ServiceManual.Controllers.v1
         /// <param name="taskID"></param>
         /// <returns></returns>
         [HttpDelete(APIRoute.Tasks.Delete)]
-        public IActionResult Delete([FromRoute]string apiKey, int taskID)
+        public IActionResult Delete([FromHeader]string apiKey, int taskID)
         {
             try
             {
